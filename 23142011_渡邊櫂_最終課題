@@ -1,0 +1,74 @@
+#include <iostream>
+#include <vector>
+#include <string>
+
+class Task {
+public:
+    std::string description;
+    bool is_done;
+
+    Task(const std::string& desc) : description(desc), is_done(false) {}};
+
+void Menu() {
+    std::cout << "\n操作方法\n"
+              << "1. タスクを表示\n"
+              << "2. タスクを追加\n"
+              << "3. タスクを完了\n"
+              << "4. 完了タスクを削除\n"
+              << "5. 終了する\n"
+              << "操作を選択 ：";}
+
+void VTasks(const std::vector<Task>& tasks) {
+    std::cout << "\nタスク一覧\n";
+    if (tasks.empty()) {
+        std::cout << "タスク無し\n";
+        return;}
+    for (size_t i = 0; i < tasks.size(); ++i) {
+        std::cout << i + 1 << ". "
+                  << (tasks[i].is_done ? "[完了] " : "[未完了] ")
+                  << tasks[i].description << "\n";}}
+
+void addTask(std::vector<Task>& tasks) {
+    std::cout << "\n追加するタスクの内容を入力：";
+    std::cin.ignore();  
+    std::string description;
+    std::getline(std::cin, description);
+
+    tasks.push_back(Task(description));
+    std::cout << "「" << description << "」を追加\n";}
+
+void CTask(std::vector<Task>& tasks) {
+    VTasks(tasks);
+    if (tasks.empty()) return;
+    std::cout << "\n完了にするタスクの番号 > ";
+    int index;
+    std::cin >> index;
+    if (index >= 1 && index <= tasks.size()) {
+        tasks[index - 1].is_done = true;
+        std::cout << "タスク " << index << " を完了にした\n";} 
+        else {std::cout << "番号が無効\n";}}
+void DCTasks(std::vector<Task>& tasks) {
+    std::vector<Task> temp;
+    for (const auto& t : tasks) 
+    {if (!t.is_done) temp.push_back(t);}
+    tasks = temp;
+    std::cout << "\n完了タスクを削除\n";}
+int main() {
+    std::vector<Task> tasks;
+    int choice = 0;
+
+    while (choice != 5)
+    {Menu();
+        std::cin >> choice;
+        if (std::cin.fail()) {
+            std::cin.clear(); std::cin.ignore(1000, '\n');
+            std::cout << "数値で選択\n";
+            continue;}
+        switch (choice) {
+            case 1: VTasks(tasks); break;
+            case 2: addTask(tasks); break;
+            case 3: CTask(tasks); break;
+            case 4: DCTasks(tasks); break;
+            case 5: std::cout << "終了\n"; break;
+            default: std::cout << "1～5の番号を選択\n";}}
+    return 0;}
